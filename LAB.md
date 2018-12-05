@@ -1,3 +1,29 @@
+set location route
+ callback calls helper to:
+   get API data
+   build location object
+   return response or error
+ build helpers
+
+set weather route
+ callback calls helper to:
+   get API data
+   build weather object
+   return response or error
+
+set restaurants route
+ callback calls helper to:
+   get API data
+   build restaurants object
+   return response or error
+
+set movies route
+ callback calls helper to:
+   get API data
+   build movies object
+   return response or error
+
+
 # Lab 07: APIs (continued)
 
 ## Resources
