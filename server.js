@@ -60,9 +60,7 @@ function getWeather (request, response) {
   superagent.get(url)
     .then( weatherResult => {
       const weather = weatherResult.body.daily.data.map( (day,index) => {
-        console.log('day index',index);
-        let dayWeather = new Weather(day);
-        return dayWeather;
+        return new Weather(day);
       })
       response.send(weather);
     })
@@ -76,8 +74,40 @@ function Weather(weatData) {
   this.time = new Date(weatData.time * 1000).toDateString();
 }
 
+// set YELP route
+app.get(('/yelp'), (request, response) => {
+  getRestaurants(request, response);
+})
+
+  
+// HELPER: get restaurants data
+function getRestaurants(request,response) {
+  const url = `https://api.yelp.com/v3/businesses/search?location=${request.query.data.search_query}`;
+  superagent.get(url)
+    .set('Authorization', `Bearer ${process.env.YELP_API_KEY}`)
+    .then( yelpDataRaw => {
+      const restaurants = yelpDataRaw.body.businesses.map(thisOne => {
+        return new Restaurant(thisOne);
+      });
+      response.send(restaurants);
+    })
+    .catch(error => handleError(error));
+}
+
+// HELPER: Restaurant constructor
+function Restaurant (restaurant) {
+  this.name = restaurant.name,
+  this.image_url = restaurant.image_url,
+  this.price = restaurant.price,
+  this.rating = restaurant.rating,
+  this.url = restaurant.url
+}
 
 
+
+
+// set MOVIES route
+// app.get(('/movies'), getMovies)
 
 
 // error handler
