@@ -75,10 +75,7 @@ function Weather(weatData) {
 }
 
 // set YELP route
-app.get(('/yelp'), (request, response) => {
-  getRestaurants(request, response);
-})
-
+app.get(('/yelp'), getRestaurants)
   
 // HELPER: get restaurants data
 function getRestaurants(request,response) {
@@ -103,11 +100,70 @@ function Restaurant (restaurant) {
   this.url = restaurant.url
 }
 
-
-
-
 // set MOVIES route
-// app.get(('/movies'), getMovies)
+app.get(('/movies'), getMovies)
+
+// HELPER: get movies data
+function getMovies(request, response) {
+  const url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.TMDB_API_KEY}&query=${request.query.data.search_query}`;
+  superagent.get(url)
+    .then( movieData => {
+      let parsedData = JSON.parse(movieData.text);
+      let allMovies = parsedData.results.map( rawMovie => {
+        let thisMovie = new Movie (rawMovie);
+        return thisMovie;
+      } );
+      response.send(allMovies);
+    } )
+    .catch(error => handleError(error));
+}
+
+// HELPER: Movie constructor
+function Movie (data) {
+  this.title = data.title,
+  this.overview = data.overview,
+  this.average_votes = data.vote_average,
+  this.total_votes = data.vote_count,
+  this.image_url = `https://image.tmdb.org/t/p/w200_and_h300_bestv2/${data.poster_path}`,
+  this.popularity = data.popularity,
+  this.released_on = data.release_date
+}
+
+
+// // set MEETUP route
+// app.get(('/meetup'), getMeetups)
+
+// // HELPER: get meetup data
+// function getMeetups(request, response) {
+//   const url = ``
+//   superagent.get(url)
+//     .then()
+//     .catch()
+// }
+
+// // HELPER: Trail constructor
+// function Trail (data) {
+//   // assign properties here
+// }
+
+
+
+// // set TRAILS route
+// app.get(('/trails'), getTrails)
+
+// // HELPER: get trails data
+// function getTrails(request, response) {
+//   const url = ``
+//   superagent.get(url)
+//     .then()
+//     .catch()
+// }
+
+// // HELPER: Trail constructor
+// function Trail (data) {
+//   // assign properties here
+// }
+
 
 
 // error handler
